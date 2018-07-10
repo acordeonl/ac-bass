@@ -1,0 +1,1021 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../ac-view/ac-led-group.html">
+<link rel="import" href="../ac-view/view-audio.html">
+<link rel="import" href="./bass-fretnote.html">
+<link rel="import" href="../local-dom/local-dom.html">
+<link rel="import" href="./bass-string.html">
+
+<dom-module id="bass-fretboard">
+    <template>
+        <style>
+            [wrapper]{
+                height: 100vh;
+                width: 100vw;
+                @apply --layout-center;
+                @apply --layout-horizontal;
+                @apply --layout-center-justified;
+            }
+            .vertical[wrapper]{
+                transform: rotate(90deg) ;
+            }
+
+            [bass-wrapper]{
+                margin-top:0 ;
+                margin-left:2vw;
+                height: 100%;
+                width: 100%;
+                @apply --layout-horizontal;
+                @apply --layout-center;
+                @apply --layout-center-justified;
+            }
+            .leftHanded [bass-wrapper] {
+                margin-left:0 ; 
+                margin-right: 2vw ;
+            }
+            [fretboard]{
+                margin-left:0px ;
+                width: 107vw;
+                height: 20vw;
+                @apply --layout-horizontal;
+                @apply --layout-center;
+                @apply --layout-center-justified;
+            }
+            .vertical [fretboard]{
+                margin-top:0vh ;
+                margin-left:20vh ;
+                width:170vh ; 
+                height:30vh ;
+            }
+            .leftHanded .vertical [fretboard]{
+                margin-left:24vh; 
+            }
+
+
+            [fret]{
+                height:100%;
+                background-color: var(--ac-led-shadow0,gray);
+                @apply --layout-vertical;
+                @apply --layout-justified;
+                @apply --layout-center;
+                @apply --layout-center-justified;
+
+            }
+            [fret-div]{
+                height: 100%; 
+                width:2px; 
+                background-color:var(--title-color2,gray);
+                opacity:0.7 ;
+            }
+            [fret-ref]{
+                height:100%;
+                @apply --layout-vertical;
+                @apply --layout-justified;
+                @apply --layout-center-justified;
+
+            }
+            [fret-div-ref]{
+                height: 100%; 
+                width:2px; 
+            }
+            [fretnote]{
+                font-weight: 400; 
+                width:100%;
+                padding-top:1vw;
+                padding-bottom:1vw;
+                border-radius: 5px;
+                @apply --layout-vertical;
+                @apply --layout-justified;
+                @apply --layout-center;
+                @apply --layout-center-justified;
+            }
+            .vertical [fretnote] {
+                padding-top:1vh ; 
+                padding-bottom:1vh ; 
+            }
+
+            [fretpositions]{
+                @apply --layout-vertical;
+                @apply --layout-justified;
+                height: 16vw;
+            }
+            .vertical [fretpositions] {
+                height:24vh ; 
+            }
+            
+
+
+            [fretpos]{
+                @apply --layout-vertical;
+                @apply --layout-justified;
+                @apply --layout-center; 
+                @apply --layout-center-justified;
+                color:white ;
+                width:100%;
+            }
+            [strings]{
+                @apply --layout-vertical;
+                @apply --layout-justified;
+                height: 16vw;
+                position: absolute ;
+            }
+            .vertical [strings] {
+                height:24vh ; 
+            }
+
+            [string]{
+                width:100%; 
+                height:3px; 
+                opacity: 0.4;
+                @apply --layout-vertical;
+                @apply --layout-justified;
+                @apply --layout-center; 
+                @apply --layout-center-justified;
+                background-color: white ;
+            }
+            [string-ref]{
+                width:100%; 
+                @apply --layout-vertical;
+                @apply --layout-center; 
+            }
+            [dot]{
+                border-radius: 100% ; 
+                /* background-color: var(--ac-led-shadow2,gray); */
+                /* background-color: gray ; */
+                background-color:var(--title-color2,gray);
+                opacity:0.6;
+                margin-top:-0.1vw;
+                height:1vw;
+                width:1vw;
+            }
+            .vertical [dot] {
+                height:1.8vh;
+                width:1.8vh;
+                margin-top:-1vh ;
+            }
+
+            [dot-wrapper]{
+                @apply --layout-vertical;
+                @apply --layout-justified;
+                @apply --layout-center;
+                @apply --layout-center-justified;
+                height: 50%; 
+                width:1px;
+            }
+            [dot1]{
+                margin-top:0vw;
+            }
+            .vertical [dot1]{
+                margin-top:0.2vh ;
+            }
+
+            [dot2]{
+                margin-top:0.5vw;
+            }
+            .vertical [dot2]{
+                margin-top:-1.35vh ; 
+            }
+        </style>
+        <style strings>
+            [string1]{
+                height:0.2vw;
+            }
+            .vertical [string1] {
+                height:0.2vh ; 
+            }
+
+            [string2]{
+                height:0.28vw;
+            }
+            .vertical [string2]{
+                height:0.28vh;
+            }
+
+            [string3]{
+                height:0.36vw;
+            }
+            .vertical [string3]{
+                height:0.36vh;
+            }
+
+            [string4]{
+                height:0.44vw;
+            }
+            .vertical [string4]{
+                height:0.44vh;
+            }
+
+            [string5] {
+                height:0.52vw;
+            }
+            .vertical [string5]{
+                height:0.52vh;
+            }
+
+            [string6] {
+                height:0.6vw;
+            }
+            .vertical [string6]{
+                height:0.6vh;
+            }
+            .leftHanded{
+                transform: scale(-1,1) ; 
+            }
+        </style>
+
+        <view-audio channel='0'></view-audio>
+        <view-audio channel='1'></view-audio>
+        <view-audio channel='2'></view-audio>
+        <view-audio channel='3'></view-audio>
+        <local-dom mobile="{{mobile}}" tablet="{{tablet}}" desktop="{{desktop}}">
+            <div class$="{{_computeLeftHanded(___acV_leftHanded)}}">
+                <div class$="{{_computeRotation(___acV_rotation,mobile)}}" wrapper >
+                    <div bass-wrapper>
+                        <div fretboard style='position:absolute;'>
+                            <div fret-div style='width:2.9%; border-top-left-radius: 7px;border-bottom-left-radius: 7px;'></div>
+                            <div fret style='width:5.61%'></div>
+                            <div fret-div ></div>
+                            <div fret style='width:5.3%'></div>
+                            <div fret-div ></div>
+                            <div fret style='width:5%'>
+                                <div dot></div>
+                            </div>
+                            <div fret-div ></div>
+                            <div fret style='width:4.72%'></div>
+                            <div fret-div ></div>
+                            <div fret style='width:4.45%'>
+                                <div dot></div> 
+                            </div>
+                            <div fret-div ></div>
+                            <div fret style='width:4.2%'></div>
+                            <div fret-div ></div>
+                            <div fret style='width:3.97%'>
+                                <div dot></div>
+                            </div>
+                            <div fret-div ></div>
+                            <div fret style='width:3.75%'></div>
+                            <div fret-div ></div>
+                            <div fret style='width:3.54%'>
+                                <div dot></div>
+                            </div>
+                            <div fret-div ></div>
+                            <div fret style='width:3.34%'></div>
+                            <div fret-div ></div>
+                            <div fret style='width:3.15%'></div>
+                            <div fret-div ></div>
+                            <div fret style='width:2.97%'>
+                                <div dot-wrapper >
+                                    <div dot1 dot></div>
+                                </div>
+                                <div dot-wrapper >
+                                    <div dot2 dot></div>
+                                </div>
+                            </div>
+                            <div fret-div ></div>
+                            <div fret style='width:2.81%'></div>
+                            <div fret-div ></div>
+                            <div fret style='width:2.65%'></div>
+                            <div fret-div ></div>
+                            <div fret style='width:2.5%'>
+                                <div dot></div>
+                            </div>
+                            <div fret-div ></div>
+                            <div fret style='width:2.36%'></div>
+                            <div fret-div ></div>
+                            <div fret style='width:2.23%'>
+                                <div dot></div>
+                            </div>
+                            <div fret-div ></div>
+                            <div fret style='width:2.1%'></div>
+                            <div fret-div ></div>
+                            <div fret style='width:1.98%'>
+                                <div dot></div>
+                            </div>
+                            <div fret-div ></div>
+                            <div fret style='width:1.87%'></div>
+                            <div fret-div ></div>
+                            <div fret style='width:1.77%;' >
+                                <div dot></div>
+                            </div>
+                            <div fret-div ></div>
+                            <div fret style='width:1.77%;' >
+                            </div>
+                            <div fret-div ></div>
+                            <div fret style='width:1.77%;border-top-right-radius: 7px;border-bottom-right-radius: 7px;' >
+                            </div>
+
+                            <div strings style='width:calc(76.71% + 46px);'>
+                                    <div string string3 ></div>
+                                    <div string string4 ></div>
+                                    <div string string5 ></div>
+                                    <div string string6 ></div>
+                            </div>
+                        </div>
+
+
+                        <div fretboard style='position:absolute; opacity:1;'>
+                            
+                            <div strings style='width:calc(76.71% + 46px);'>
+                                    <div string-ref string3>
+                                        <bass-string string-type='3' acLed ac-id='50' channel='0'>  </bass-string>
+                                    </div>
+                                    <div string-ref string4>
+                                        <bass-string string-type='4' acLed ac-id='50' channel='1'>  </bass-string>
+                                    </div>
+                                    <div string-ref string5>
+                                        <bass-string  string-type='5' acLed ac-id='50' channel='2'>  </bass-string>
+                                    </div>
+                                    <div string-ref string6>
+                                        <bass-string string-type='6' acLed ac-id='50' channel='3'>  </bass-string>
+                                    </div>
+                            </div>
+
+                            <div fret-ref style='width:2.9%; border-top-left-radius: 7px;border-bottom-left-radius: 7px;'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='0' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='0' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='0' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='0' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-ref style='width:5.61%'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='1' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='1' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='1' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='1' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:5.3%'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='2' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='2' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='2' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='2' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:5%'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='3' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='3' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='3' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='3' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:4.72%'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='4' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='4' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='4' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='4' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:4.45%'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='5' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='5' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='5' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='5' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:4.2%'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='6' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='6' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='6' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='6' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:3.97%'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='7' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='7' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='7' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='7' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:3.75%'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='8' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='8' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='8' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='8' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:3.54%'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='9' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='9' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='9' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='9' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:3.34%'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='10' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='10' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='10' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='10' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:3.15%'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='11' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='11' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='11' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='11' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:2.97%'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='12' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='12' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='12' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='12' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:2.81%'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='13' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='13' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='13' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='13' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:2.65%'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='14' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='14' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='14' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='14' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:2.5%'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='15' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='15' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='15' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='15' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:2.36%'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='16' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='16' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='16' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='16' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:2.23%'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='17' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='17' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='17' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='17' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:2.1%'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='18' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='18' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='18' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='18' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:1.98%'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='19' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='19' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='19' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='19' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:1.87%'>
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='20' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='20' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='20' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='20' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:1.77%;' >
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='21' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='21' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='21' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='21' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:1.77%;' >
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='22' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='22' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='22' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='22' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fret-div-ref ></div>
+                            <div fret-ref style='width:1.77%;border-top-right-radius: 7px;border-bottom-right-radius: 7px;' >
+                                <div fretpositions>
+                                    <div fretpos string3>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='23' channel='0'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string4>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='23' channel='1'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string5>
+                                        <div fretnote>
+                                            <bass-fretnote acLed ac-id='23' channel='2'></bass-fretnote>
+                                        </div>
+                                    </div>
+                                    <div fretpos string6>
+                                    <div fretnote>
+                                        <bass-fretnote acLed ac-id='23' channel='3'></bass-fretnote>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </local-dom>
+    </template>
+    <script>
+        class BassFretboard extends ACLedGroup {
+            static get is() { return 'bass-fretboard'; }
+            static get properties() {return {
+                midiNoteToGUI:{type:Array,value:[]}
+            }}
+            constructor() {
+                super();
+            }
+            _computeLeftHanded(leftHanded) {
+                if(leftHanded) {
+                    return 'leftHanded' ; 
+                }
+                return '' ; 
+            }
+            ___acV_midiEventToAudioNote (channel, midiNote, origin,initiator) {
+                if (origin.startsWith('___midi_instrument')  || initiator ==='record')
+                    return midiNote ;
+                return this.___acV_midiEventToAudioNoteDefault(channel, midiNote, origin);
+            }
+            _setNoteNames () {
+                var nodeList = Polymer.dom(this.root).querySelectorAll('bass-fretnote');
+                for (var i = 0; i < nodeList.length; i++) {
+                    if(nodeList[i].channel === 0)
+                        nodeList[i].note = this.___acV_getMIDINoteName(nodeList[i].acId+43+this.___acV_viewPitchDiff) ;     
+                    if(nodeList[i].channel === 1)
+                        nodeList[i].note = this.___acV_getMIDINoteName(nodeList[i].acId+38+this.___acV_viewPitchDiff) ;     
+                    if(nodeList[i].channel === 2)
+                        nodeList[i].note = this.___acV_getMIDINoteName(nodeList[i].acId+33+this.___acV_viewPitchDiff) ;     
+                    if(nodeList[i].channel === 3)
+                        nodeList[i].note = this.___acV_getMIDINoteName(nodeList[i].acId+28+this.___acV_viewPitchDiff) ;     
+                }
+            }
+            ___acV_editMIDI_IN_event(e) {
+                if(e.channel === 14 ) 
+                    e.channel = 0 ; 
+                if(e.channel === 13 ) 
+                    e.channel = 1 ; 
+                if(e.channel === 12 ) 
+                    e.channel = 2 ; 
+                if(e.channel === 11 ) 
+                    e.channel = 3 ; 
+                return e ;
+            }
+            ___acV_mapMIDIEventToAcLedState(channel,midiNote){
+                return [1,1] ;
+            }
+            ___acV_mapMIDIEventToAcLedId (channel, midiNote,origin,initiator) {
+                if (origin.startsWith('___midi_instrument') || initiator ==='record') {
+                    if(channel === 0)
+                        return[-this.___acV_viewPitchDiff+midiNote-43,50] ; 
+                    if(channel === 1)
+                        return[-this.___acV_viewPitchDiff+midiNote-38,50] ; 
+                    if(channel === 2)
+                        return[-this.___acV_viewPitchDiff+midiNote-33,50] ; 
+                    if(channel === 3)
+                        return[-this.___acV_viewPitchDiff+midiNote-28,50] ; 
+                }
+                else{
+                    if(channel === 0)
+                        return[this.___acV_recordingPitchDiff-this.___acV_viewPitchDiff+midiNote-43,50] ; 
+                    if(channel === 1)
+                        return[this.___acV_recordingPitchDiff-this.___acV_viewPitchDiff+midiNote-38,50] ; 
+                    if(channel === 2)
+                        return[this.___acV_recordingPitchDiff-this.___acV_viewPitchDiff+midiNote-33,50] ; 
+                    if(channel === 3)
+                        return[this.___acV_recordingPitchDiff-this.___acV_viewPitchDiff+midiNote-28,50] ; 
+                }
+            }
+            ___acV_onAddPitch () {
+                this._setNoteNames();
+            }
+            _computeRotation(rotation, mobile) {
+                if (rotation || mobile )
+                    return "vertical";
+                return "";
+            }
+            ready() {
+                super.ready() ;
+                this._setNoteNames();
+            }
+        }
+        customElements.define('bass-fretboard', BassFretboard);
+    </script>
+</dom-module>

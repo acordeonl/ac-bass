@@ -1,0 +1,155 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../ac-view/ac-led.html">
+<link rel="import" href="../local-dom/local-dom.html">
+
+
+<dom-module id="bass-string">
+    <template>
+        <style>
+            :host{
+                width:100% ; 
+                height: 100% ; 
+                display: block;
+                position: relative;
+            }
+            [rectangle]{
+                position: absolute;
+                width:100%;
+                height:100%; 
+                border-radius: 5px;
+                font-weight: 400; 
+                @apply --layout-vertical;
+                @apply --layout-justified;
+                @apply --layout-center;
+                @apply --layout-center-justified;
+            }
+            [acLed] {
+                position: absolute;
+                width:100%;
+                height:100%; 
+                border-radius: 5px;
+                background-color: gray ;
+                font-weight: 400; 
+                @apply --layout-vertical;
+                @apply --layout-justified;
+                @apply --layout-center;
+                @apply --layout-center-justified;
+            }
+            [wrapper]{
+                position: relative ;
+                @apply --layout-vertical;
+                @apply --layout-justified;
+                @apply --layout-center;
+                @apply --layout-center-justified;
+            }
+            [note]{
+                display: none ;
+            }
+        </style>
+        <local-dom mobile="{{mobile}}" tablet="{{tablet}}" desktop="{{desktop}}">
+            <div wrapper>
+                <div rectangle >
+                    <!-- <div noteNames style$='display:{{_computeDisplay(___acV_displayingNotes)}} ;'>
+                        [[note]]
+                    </div> -->
+                </div>
+                <div acLed >
+                    <!-- override default -->
+                    <div note>
+                    </div>
+                </div>
+            </div>
+        </local-dom>
+    </template>
+    <script>
+        class BassString extends ACLed {
+            static get is() { return 'bass-string'; }
+            static get properties() {return {
+                stringType:{type:Number,value:1}
+            }}
+            constructor() {
+                super();
+            }
+            ready() {
+                super.ready() ;
+                if (this.___acV_rotation || this.mobile) {
+                    if(this.stringType === 1){
+                        this.shadowRoot.querySelector('[rectangle]').style.height = '0.7vh' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.height = '0.7vh' ; 
+                        this.shadowRoot.querySelector('[rectangle]').style.marginTop = '0.08vh' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.marginTop = '0.08vh' ; 
+                    }
+                    if(this.stringType === 2){
+                        this.shadowRoot.querySelector('[rectangle]').style.height = '0.78vh' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.height = '0.78vh' ; 
+                        this.shadowRoot.querySelector('[rectangle]').style.marginTop = '0.1vh' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.marginTop = '0.1vh' ; 
+                    }
+                    if(this.stringType === 3){
+                        this.shadowRoot.querySelector('[rectangle]').style.height = '0.86vh' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.height = '0.86vh' ; 
+                        this.shadowRoot.querySelector('[rectangle]').style.marginTop = '0.12vh' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.marginTop = '0.12vh' ; 
+                    }
+                    if(this.stringType === 4){
+                        this.shadowRoot.querySelector('[rectangle]').style.height = '0.94vh' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.height = '0.94vh' ; 
+                        this.shadowRoot.querySelector('[rectangle]').style.marginTop = '0.22vh' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.marginTop = '0.22vh' ; 
+                    }
+                    if(this.stringType === 5){
+                        this.shadowRoot.querySelector('[rectangle]').style.height = '1.02vh' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.height = '1.02vh' ; 
+                        this.shadowRoot.querySelector('[rectangle]').style.marginTop = '0.25vh' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.marginTop = '0.25vh' ; 
+                    }
+                    if(this.stringType === 6){
+                        this.shadowRoot.querySelector('[rectangle]').style.height = '1.1vh' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.height = '1.1vh' ; 
+                        this.shadowRoot.querySelector('[rectangle]').style.marginTop = '0.3vh' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.marginTop = '0.3vh' ; 
+                    }
+                }
+                else {
+                    if(this.stringType === 1){
+                        this.shadowRoot.querySelector('[rectangle]').style.height = '0.3vw' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.height = '0.3vw' ; 
+                        this.shadowRoot.querySelector('[rectangle]').style.marginTop = '0.08vw' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.marginTop = '0.08vw' ; 
+                    }
+                    if(this.stringType === 2){
+                        this.shadowRoot.querySelector('[rectangle]').style.height = '0.38vw' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.height = '0.38vw' ; 
+                        this.shadowRoot.querySelector('[rectangle]').style.marginTop = '0.1vw' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.marginTop = '0.1vw' ; 
+                    }
+                    if(this.stringType === 3){
+                        this.shadowRoot.querySelector('[rectangle]').style.height = '0.46vw' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.height = '0.46vw' ; 
+                        this.shadowRoot.querySelector('[rectangle]').style.marginTop = '0.18vw' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.marginTop = '0.18vw' ; 
+                    }
+                    if(this.stringType === 4){
+                        this.shadowRoot.querySelector('[rectangle]').style.height = '0.54vw' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.height = '0.54vw' ; 
+                        this.shadowRoot.querySelector('[rectangle]').style.marginTop = '0.22vw' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.marginTop = '0.22vw' ; 
+                    }
+                    if(this.stringType === 5){
+                        this.shadowRoot.querySelector('[rectangle]').style.height = '0.62vw' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.height = '0.62vw' ; 
+                        this.shadowRoot.querySelector('[rectangle]').style.marginTop = '0.25vw' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.marginTop = '0.25vw' ; 
+                    }
+                    if(this.stringType === 6){
+                        this.shadowRoot.querySelector('[rectangle]').style.height = '0.7vw' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.height = '0.7vw' ; 
+                        this.shadowRoot.querySelector('[rectangle]').style.marginTop = '0.3vw' ; 
+                        this.shadowRoot.querySelector('[acLed]').style.marginTop = '0.3vw' ; 
+                    }
+                }       
+            }
+        }
+        customElements.define('bass-string', BassString);
+    </script>
+</dom-module>

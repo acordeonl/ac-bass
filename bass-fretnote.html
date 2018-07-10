@@ -1,0 +1,126 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../ac-view/ac-led.html">
+<link rel="import" href="../local-dom/local-dom.html">
+
+<dom-module id="bass-fretnote">
+    <template>
+        <style>
+            :host{
+                width:100% ; 
+                height: 100% ; 
+                display: block;
+                position: relative;
+            }
+            [rectangle]{
+                position: absolute;
+                width:100%;
+                height:100%; 
+                border-radius: 5px;
+                /* background-color: green; */
+                font-weight: 400; 
+                padding-top:1.2vw;
+                padding-bottom:1.2vw;
+                @apply --layout-vertical;
+                @apply --layout-justified;
+                @apply --layout-center;
+                @apply --layout-center-justified;
+            }
+            .vertical [rectangle]{
+                padding-top: 2vh ; 
+                padding-bottom: 2vh ; 
+            }
+            
+            [acLed] {
+                position: absolute;
+                width:100%;
+                height:100%; 
+                border-radius: 5px;
+                background-color: gray ;
+                font-weight: 400; 
+                padding-top:1.2vw;
+                padding-bottom:1.2vw;
+                @apply --layout-vertical;
+                @apply --layout-justified;
+                @apply --layout-center;
+                @apply --layout-center-justified;
+            }
+            .vertical [acLed] {
+                padding-top: 2vh ; 
+                padding-bottom: 2vh ;
+            }
+
+            [wrapper]{
+                position: relative ;
+                @apply --layout-vertical;
+                @apply --layout-justified;
+                @apply --layout-center;
+                @apply --layout-center-justified;
+            }
+            [note] {
+                color: var(--paper-icon-color, #fafafa);
+                font-weight: 400;
+                @apply --layout-center;
+                @apply --layout-center-justified;
+                @apply --layout-horizontal;
+                height: 95%;
+                width: 100%;
+                text-align: center;
+            }
+            .vertical [note]{
+                transform: rotate(180deg) ; 
+            }
+            .vertical [noteNames]{
+                transform: rotate(180deg) ; 
+            }
+            .leftHanded{
+                transform: scale(-1,1) ; 
+            }
+        </style>
+        <local-dom mobile="{{mobile}}" tablet="{{tablet}}" desktop="{{desktop}}">
+            <div class$="{{_computeLeftHanded(___acV_leftHanded)}}" >
+                <div class$="{{_computeRotation(___acV_rotation,mobile)}}" wrapper>
+                    <div rectangle >
+                        <div noteNames style$='display:{{_computeDisplay(___acV_displayingNotes)}} ;'>
+                            [[note]]
+                        </div>
+                    </div>
+                    <div acLed >
+                        <!-- override default -->
+                        <div  note>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </local-dom>
+    </template>
+    <script>
+        class BassFretnote extends ACLed {
+            static get is() { return 'bass-fretnote'; }
+            static get properties() {return {}}
+            constructor() {
+                super();
+            }
+            _computeLeftHanded(leftHanded) {
+                if(leftHanded) {
+                    return 'leftHanded' ; 
+                }
+                return '' ; 
+            }
+            _computeRotation(rotation, mobile) {
+                if (rotation || mobile )
+                    return "vertical";
+                return "";
+            }
+            _computeDisplay (value) {
+                if (value) {
+                    return 'block' ; 
+                }
+                return 'none'
+            }
+            ready() {
+                super.ready() ;
+            }
+        }
+        customElements.define('bass-fretnote', BassFretnote);
+    </script>
+</dom-module>

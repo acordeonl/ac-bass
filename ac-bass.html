@@ -1,0 +1,33 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../ac-view/ac-view.html">
+<link rel="import" href="./bass-fretboard.html">
+<dom-module id="ac-bass">
+    <template>
+        <style>
+        </style>
+        <bass-fretboard acLedGroup name='bass'>
+        </bass-fretboard>
+    </template>
+    <script>
+        class ACBass extends ACView {
+            static get is() { return 'ac-bass'; }
+            static get properties() {return {}}
+            constructor() {
+                super();
+            }
+            ___acV_handleMIDIEvent (e) {
+                this.shadowRoot.querySelector('bass-fretboard').___acV_onMIDIEvent(e);
+            }
+            ready() {
+                super.ready() ;
+                this.___acV_setName('bass') ; 
+                this.___acV_setDefaultReverb(30);
+                this.___acV_setDefaultViewPitch(43) ; 
+                this.___acV_canDisplayNotes(true) ; 
+                this.___acV_canDisplayLeftHanded(true) ; 
+                this.___acV_canRotate(true) ; 
+            }
+        }
+        customElements.define('ac-bass', ACBass);
+    </script>
+</dom-module>
